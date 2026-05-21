@@ -18,9 +18,12 @@ async fn set_preferences() -> axum::Json<serde_json::Value> {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    server::serve("social-feed", Router::new()
-        .route("/health", get(health))
-        .route("/feed", get(get_feed))
-        .route("/feed/preferences", post(set_preferences))
-    ).await
+    server::serve(
+        "social-feed",
+        Router::new()
+            .route("/health", get(health))
+            .route("/feed", get(get_feed))
+            .route("/feed/preferences", post(set_preferences)),
+    )
+    .await
 }
