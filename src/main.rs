@@ -1,29 +1,26 @@
-use axum::routing::{get, post};
+mod errors;
+mod routes;
+pub(crate) mod service;
+
+use axum::routing::{get, put};
 use axum::Router;
-use config::health::health_response;
 use config::server;
-use serde_json::json;
 
-async fn health() -> axum::Json<serde_json::Value> {
-    health_response("social-feed")
-}
-
-async fn get_feed() -> axum::Json<serde_json::Value> {
-    axum::Json(json!({ "status": "stub", "feed": [] }))
-}
-
-async fn set_preferences() -> axum::Json<serde_json::Value> {
-    axum::Json(json!({ "status": "stub", "message": "feed preferences not implemented" }))
-}
+use routes::following::{follow_board, get_following, internal_get_following, unfollow_board};
+use routes::stats::get_user_stats;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     server::serve(
-        "social-feed",
+        "feed",
         Router::new()
-            .route("/health", get(health))
-            .route("/feed", get(get_feed))
-            .route("/feed/preferences", post(set_preferences)),
+            .route("/users/me/following", get(get_following))
+            .route(
+                "/users/me/following/:board_id",
+                put(follow_board).delete(unfollow_board),
+            )
+            .route("/users/me/stats", get(get_user_stats))
+            .route("/internal/following", get(internal_get_following)),
     )
     .await
 }
