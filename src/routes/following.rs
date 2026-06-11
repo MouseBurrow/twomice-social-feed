@@ -1,5 +1,6 @@
 use crate::errors::SocialFeedError;
 use crate::service;
+use crate::service::FollowedBoardInfo;
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::Json;
@@ -10,7 +11,7 @@ use serde::Deserialize;
 pub async fn get_following(
     State(app): State<AppData>,
     user_id: UserId,
-) -> Result<Json<Vec<String>>, SocialFeedError> {
+) -> Result<Json<Vec<FollowedBoardInfo>>, SocialFeedError> {
     let boards = service::get_followed_boards(&app.pool, user_id.into()).await?;
     Ok(Json(boards))
 }
@@ -41,7 +42,7 @@ pub struct InternalFollowingQuery {
 pub async fn internal_get_following(
     State(app): State<AppData>,
     Query(query): Query<InternalFollowingQuery>,
-) -> Result<Json<Vec<String>>, SocialFeedError> {
+) -> Result<Json<Vec<FollowedBoardInfo>>, SocialFeedError> {
     let boards = service::get_followed_boards(&app.pool, query.user_id).await?;
     Ok(Json(boards))
 }
