@@ -37,7 +37,7 @@ pub async fn get_followed_boards(
         std::env::var("POST_SERVICE_URL").unwrap_or_else(|_| "http://localhost:8082".to_string());
 
     let client = reqwest::Client::new();
-    let url = format!("{}/mcf/active", post_service_url);
+    let url = format!("{}/b/active", post_service_url);
 
     let active_boards = client
         .get(&url)
