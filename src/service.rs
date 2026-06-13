@@ -109,3 +109,18 @@ pub async fn get_following_count(
 
     Ok(count)
 }
+
+pub async fn get_follower_count(
+    pool: &Pool<Postgres>,
+    board_name: &str,
+) -> Result<i64, SocialFeedError> {
+    let count: i64 =
+        sqlx::query_scalar("SELECT COUNT(*)::BIGINT FROM follows WHERE board_name = $1")
+            .bind(board_name)
+            .fetch_optional(pool)
+            .await
+            .map_err(map_sqlx_error::<SocialFeedError>)?
+            .unwrap_or(0);
+
+    Ok(count)
+}

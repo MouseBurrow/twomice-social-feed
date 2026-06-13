@@ -6,7 +6,9 @@ use axum::routing::{get, put};
 use axum::Router;
 use config::server;
 
-use routes::following::{follow_board, get_following, internal_get_following, unfollow_board};
+use routes::following::{
+    follow_board, get_follower_count, get_following, internal_get_following, unfollow_board,
+};
 use routes::stats::get_user_stats;
 
 #[tokio::main]
@@ -20,7 +22,8 @@ async fn main() -> anyhow::Result<()> {
                 put(follow_board).delete(unfollow_board),
             )
             .route("/users/me/stats", get(get_user_stats))
-            .route("/internal/following", get(internal_get_following)),
+            .route("/internal/following", get(internal_get_following))
+            .route("/b/:topic/followers", get(get_follower_count)),
     )
     .await
 }
